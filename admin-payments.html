@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MN Teaching — Billing Console</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="design.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #fff7de;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #1c3b5a;
+    }
+
+    .admin-container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .collapse-header {
+      width: 100%;
+      background: #1c3b5a;
+      color: #fff7de;
+      padding: 18px 22px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    }
+
+    .collapse-header:hover {
+      opacity: 0.9;
+    }
+
+    .collapse-content {
+      background: #1c3b5a;
+      color: #fff7de;
+      padding: 28px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+      display: none;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: 2px solid #fff7de;
+      background: #fff7de;
+      color: #1c3b5a;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    button {
+      background-color: #fff7de;
+      color: #1c3b5a;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: 0.25s ease;
+      margin-right: 10px;
+    }
+
+    button:hover {
+      opacity: 0.8;
+    }
+
+    .lesson-card {
+      background:#fff7de;
+      color:#1c3b5a;
+      padding:15px;
+      border-radius:10px;
+      border:2px solid #1c3b5a;
+      margin-bottom:12px;
+    }
+
+    .lesson-card-minimal {
+      background:#fff7de;
+      color:#1c3b5a;
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid #1c3b5a;
+      margin-bottom:8px;
+      font-size: 0.9rem;
+    }
+
+    .teacher-student-list div {
+      padding: 12px;
+      background: white;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      border: 1px solid var(--accent);
+    }
+
+    .teacher-student-list div:hover {
+      background: var(--accent);
+    }
+
+    .paid-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      background: #3ecacb;
+      color: white;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      margin-left: 10px;
+    }
+
+    .unpaid-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      background: #ffdddd;
+      color: #1c3b5a;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      margin-left: 10px;
+    }
+
+    .partial-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      background: #fff0b3;
+      color: #1c3b5a;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      margin-left: 10px;
+    }
+
+    .override-note {
+      font-size: 0.85rem;
+      opacity: 0.8;
+      margin-top: -10px;
+      margin-bottom: 10px;
+    }
+
+    .action-link {
+      cursor: pointer;
+      text-decoration: none;
+      color: #1c3b5a;
+      font-weight: 500;
+      transition: 0.2s ease;
+    }
+
+    .action-link:hover {
+      text-decoration: underline;
+      opacity: 0.8;
+    }
+
+    /* premium micro buttons for card actions */
+    .action-btn {
+      background: #fff7de;
+      color: #1c3b5a;
+      border: 1px solid #1c3b5a;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s ease;
+      margin-right: 6px;
+      margin-top: 6px;
+    }
+
+    .action-btn:hover {
+      background: #1c3b5a;
+      color: #fff7de;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+
+    <div class="logo-container">
+      <img src="logo-MNBTeaching.png" alt="MN Teaching Logo">
+    </div>
+
+    <nav class="nav-center">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="admin-dashboard.html">Admin Dashboard</a>
+      <a href="client-manager.html">Client Manager</a>
+      <a href="admin-payments.html">Billing Console</a>
+
+      <a href="admin-payments-de.html" class="lang-flag">
+        <img src="germany.png" alt="Deutsch">
+      </a>
+    </nav>
+
+    <div class="header-right">
+      <button class="logout-btn" id="change-password-btn-desktop" style="margin-right: 10px;">
+        Change Password
+      </button>
+      <button class="logout-btn" id="logout-btn">Logout</button>
+    </div>
+
+    <div class="hamburger" id="hamburger">
+      <div classline class="line"><span></span></div>
+      <div class="line"><span></span></div>
+      <div class="line"><span></span></div>
+    </div>
+
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="admin-dashboard.html">Admin Dashboard</a>
+      <a href="client-manager.html">Client Manager</a>
+      <a href="admin-payments.html">Billing Console</a>
+
+      <a href="admin-payments-de.html" class="lang-flag">
+        <img src="germany.png" alt="Deutsch">
+      </a>
+
+      <button class="logout-btn" id="change-password-btn-mobile" style="margin-top: 10px;">
+        Change Password
+      </button>
+
+      <button class="logout-btn" id="logout-btn-mobile">Logout</button>
+    </div>
+
+  </div>
+</header>
+
+<!-- BILLING CONSOLE -->
+<div class="admin-container">
+
+  <h2 style="margin-bottom: 20px;">Billing Console</h2>
+  <p>Select a student to view and manage their billing.</p>
+
+  <!-- STUDENT SELECTOR -->
+  <div id="teacher-students" class="section-card">
+    <h3>Your Students</h3>
+    <div id="teacher-student-list" class="teacher-student-list"></div>
+  </div>
+
+  <div id="selected-student-label" style="font-weight:600; margin-top:20px; display:none;"></div>
+  <div id="billing-recap" style="margin-top:8px; display:none; font-size:0.95rem; font-weight:500;"></div>
+
+  <!-- BILLING SECTIONS -->
+  <div id="billing-sections" style="display:none; margin-top:30px;">
+
+    <!-- LESSONS -->
+    <div class="collapse-header">Lesson Payment Status <span>›</span></div>
+    <div class="collapse-content">
+
+      <h3>Upcoming Lessons</h3>
+      <div id="upcoming-lesson-list"></div>
+
+      <h3 style="margin-top:25px;">Completed Lessons — Unpaid</h3>
+      <div id="completed-unpaid-list"></div>
+
+      <h3 style="margin-top:25px;">Completed Lessons — Paid</h3>
+      <div id="completed-paid-list"></div>
+
+    </div>
+
+    <!-- OUTSTANDING BALANCE -->
+    <div class="collapse-header">Outstanding Balance <span>›</span></div>
+    <div class="collapse-content">
+      <h3>Total Outstanding:</h3>
+      <p id="outstanding-amount" style="font-size:1.4rem; font-weight:700;">£0</p>
+
+      <p class="override-note" id="override-note" style="display:none;"></p>
+
+      <label>Override Outstanding (£)</label>
+      <input id="override-outstanding-input" type="number">
+
+      <button onclick="applyOverrideOutstanding()">Apply Override</button>
+      <button onclick="clearOverrideOutstanding()">Clear Override</button>
+    </div>
+
+    <!-- LESSON RATE -->
+    <div class="collapse-header">Lesson Rate <span>›</span></div>
+    <div class="collapse-content">
+      <label>Lesson Rate (£)</label>
+      <input id="lesson-rate-input" type="number" min="1">
+      <button onclick="saveLessonRate()">Save Lesson Rate</button>
+    </div>
+
+    <!-- ADD PAYMENTS -->
+    <div class="collapse-header">Add Payments <span>›</span></div>
+    <div class="collapse-content">
+
+      <label>Payee Name</label>
+      <input id="manual-payment-payee" type="text" placeholder="e.g. John Smith">
+
+      <label>Payment Method</label>
+      <select id="manual-payment-method">
+        <option value="Bank Transfer">Bank Transfer</option>
+        <option value="Cash">Cash</option>
+        <option value="Revolut">Revolut</option>
+        <option value="Bizum">Bizum</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label>Amount (£)</label>
+      <input id="manual-payment-amount" type="number" min="1">
+
+      <label>Date</label>
+      <input id="manual-payment-date" type="date">
+
+      <button onclick="addManualPayment()">Add Payment</button>
+    </div>
+
+    <!-- PAYMENT HISTORY -->
+    <div class="collapse-header">Payment History <span>›</span></div>
+    <div class="collapse-content">
+      <div id="payment-history"></div>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="main.js"></script>
+
+<script>
+  
+/* ===========================================================
+   Time helpers (UTC → local)
+   =========================================================== */
+function formatLocalFromUtc(utcIso) {
+  const d = new Date(utcIso);
+  return d.toLocaleString([], {
+    dateStyle: "medium",
+    timeStyle: "short"
+  });
+}
+
+/* ===========================================================
+   AUTH
+   =========================================================== */
+let user = JSON.parse(localStorage.getItem("user"));
+if (!user) window.location.href = "client-portal.html";
+if (user.role !== "teacher") window.location.href = "dashboard.html";
+
+user.email = user.email.toLowerCase();
+localStorage.setItem("user", JSON.stringify(user));
+
+/* ===========================================================
+   LOGOUT
+   =========================================================== */
+function logout() {
+  localStorage.removeItem("user");
+  window.location.href = "client-portal.html";
+}
+document.getElementById("logout-btn").onclick = logout;
+document.getElementById("logout-btn-mobile").onclick = logout;
+
+/* ===========================================================
+   COLLAPSIBLES
+   =========================================================== */
+document.querySelectorAll(".collapse-header").forEach(header => {
+  header.addEventListener("click", () => {
+    const content = header.nextElementSibling;
+    const icon = header.querySelector("span");
+
+    if (content.style.display === "block") {
+      content.style.display = "none";
+      icon.textContent = "›";
+    } else {
+      content.style.display = "block";
+      icon.textContent = "⌄";
+    }
+  });
+});
+
+/* ===========================================================
+   GLOBALS
+   =========================================================== */
+let activeEmail = null;
+let activeRate = 0;
+
+/* Helper: parse lesson datetime */
+function getLessonDateTime(lesson) {
+  // Preferred: backend lessons use startUtc
+  if (lesson.startUtc) {
+    return new Date(lesson.startUtc);
+  }
+
+  // Legacy localStorage lessons (date + time)
+  if (!lesson.date) return new Date(0);
+  const time = lesson.time || "00:00";
+  return new Date(`${lesson.date}T${time}`);
+}
+
+/* Normalise lessons: ensure rate + amountPaid exist */
+function normalizeLessons(lessons) {
+  return lessons.map(lesson => {
+    const copy = { ...lesson };
+
+    // Ensure per-lesson rate exists (fallback to activeRate if needed)
+    if (typeof copy.rate !== "number" || isNaN(copy.rate) || copy.rate <= 0) {
+      copy.rate = activeRate || 30;
+    }
+
+    // Ensure amountPaid exists
+    if (typeof copy.amountPaid !== "number" || isNaN(copy.amountPaid) || copy.amountPaid < 0) {
+      copy.amountPaid = 0;
+    }
+
+    return copy;
+  });
+}
+
+/* Apply payments to completed lessons (oldest first) */
+function applyPaymentsToLessons(lessons, payments) {
+  // Sort completed lessons by datetime ascending
+  const now = new Date();
+  const completedIndexes = lessons
+    .map((lesson, index) => ({ lesson, index }))
+    .filter(({ lesson }) => {
+      const dt = getLessonDateTime(lesson);
+      const completedFlag = lesson.completed === true;
+      return completedFlag || dt < now;
+    })
+    .sort((a, b) => getLessonDateTime(a.lesson) - getLessonDateTime(b.lesson))
+    .map(obj => obj.index);
+
+  // Total payment pool
+  let remaining = payments.reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+
+  // Reset amountPaid before applying
+  lessons.forEach(lesson => {
+    if (typeof lesson.amountPaid !== "number" || lesson.amountPaid < 0) {
+      lesson.amountPaid = 0;
+    } else {
+      lesson.amountPaid = 0;
+    }
+  });
+
+  // Distribute payments
+  completedIndexes.forEach(idx => {
+    if (remaining <= 0) return;
+    const lesson = lessons[idx];
+    const needed = lesson.rate - lesson.amountPaid;
+    if (needed <= 0) return;
+
+    const applied = Math.min(needed, remaining);
+    lesson.amountPaid += applied;
+    remaining -= applied;
+  });
+
+  return { lessons, unusedCredit: remaining };
+}
+
+/* Compute outstanding and stats */
+function computeBillingState(lessons, payments) {
+  lessons = normalizeLessons(lessons);
+  const allocation = applyPaymentsToLessons(lessons, payments);
+  const credit = allocation.unusedCredit || 0;
+  lessons = allocation.lessons;
+
+  const now = new Date();
+  let total = lessons.length;
+  let completedCount = 0;
+  let paidCount = 0;
+  let unpaidCount = 0;
+  let upcomingCount = 0;
+  let partialCount = 0;
+
+  let outstandingRaw = 0;
+
+  lessons.forEach(lesson => {
+  const dt = getLessonDateTime(lesson);
+  const isCompleted = lesson.completed === true;
+
+  if (isCompleted) {
+    completedCount++;
+    const remainingForLesson = Math.max(lesson.rate - lesson.amountPaid, 0);
+    if (remainingForLesson > 0) {
+      outstandingRaw += remainingForLesson;
+    }
+
+    if (lesson.amountPaid >= lesson.rate) {
+      paidCount++;
+    } else if (lesson.amountPaid > 0 && lesson.amountPaid < lesson.rate) {
+      unpaidCount++;
+      partialCount++;
+    } else {
+      unpaidCount++;
+    }
+  } else {
+    upcomingCount++;
+  }
+});
+
+  return {
+    lessons,
+    outstandingRaw: outstandingRaw - credit,
+    counts: {
+      total,
+      completed: completedCount,
+      paid: paidCount,
+      unpaid: unpaidCount,
+      upcoming: upcomingCount,
+      partial: partialCount
+    }
+  };
+}
+
+/* ===========================================================
+   LOAD STUDENTS
+   =========================================================== */
+async function loadTeacherStudents() {
+  const res = await fetch(`http://localhost:4000/api/students-by-teacher/${user.email}`);
+  const data = await res.json();
+
+  const list = document.getElementById("teacher-student-list");
+  list.innerHTML = "";
+
+  data.students.forEach(s => {
+    const div = document.createElement("div");
+    div.textContent = `${s.name} (${s.email})`;
+    div.onclick = () => selectStudent(s);
+    list.appendChild(div);
+  });
+}
+
+/* ===========================================================
+   SELECT STUDENT
+   =========================================================== */
+async function selectStudent(student) {
+  if (!student || !student.email) return;
+
+  activeEmail = student.email.toLowerCase();
+
+  // 1. Fetch fresh user data from backend
+  let freshUser = null;
+  try {
+    const res = await fetch("http://localhost:4000/api/users");
+    const data = await res.json();
+    freshUser = data.users.find(u => u.email.toLowerCase() === activeEmail);
+  } catch (err) {
+    console.error("Error fetching fresh user data:", err);
+  }
+
+  // 2. Determine the correct rate (backend is the source of truth)
+  if (freshUser && typeof freshUser.lessonRate === "number") {
+    activeRate = freshUser.lessonRate;
+  } else {
+    activeRate = 30; // fallback
+  }
+
+  // 3. Update UI
+  document.getElementById("selected-student-label").textContent =
+    `Billing for: ${student.name} (${activeEmail})`;
+  document.getElementById("selected-student-label").style.display = "block";
+
+  document.getElementById("billing-sections").style.display = "block";
+  document.getElementById("billing-recap").style.display = "block";
+
+  document.getElementById("lesson-rate-input").value = activeRate;
+
+  // 4. Reload billing + outstanding + payments
+  loadBillingLessons();
+  loadOutstanding();
+  loadPaymentHistory();
+}
+
+/* ===========================================================
+   RECAP SENTENCE
+   =========================================================== */
+function updateRecap(state) {
+  const { total, completed, paid, unpaid, upcoming, partial } = state.counts;
+  const recapText =
+    `Total: ${total} — Completed: ${completed} — Paid: ${paid} — ` +
+    `Unpaid: ${unpaid} — Partially Paid: ${partial} — Upcoming: ${upcoming}`;
+  document.getElementById("billing-recap").textContent = recapText;
+}
+
+/* ===========================================================
+   LOAD LESSONS + PAYMENT STATUS
+   =========================================================== */
+/* ===========================================================
+   LOAD LESSONS + PAYMENT STATUS (from backend)
+   =========================================================== */
+async function loadBillingLessons() {
+  if (!activeEmail) return;
+
+  const key = `${activeEmail}-lessons-json`;
+  const paymentKey = `${activeEmail}-payment-history`;
+
+  const upcomingList = document.getElementById("upcoming-lesson-list");
+  const completedUnpaidList = document.getElementById("completed-unpaid-list");
+  const completedPaidList = document.getElementById("completed-paid-list");
+
+  upcomingList.innerHTML = "";
+  completedUnpaidList.innerHTML = "";
+  completedPaidList.innerHTML = "";
+
+  // Load existing billing metadata (completed, rate, amountPaid) if any
+  const existingLessons = JSON.parse(localStorage.getItem(key) || "[]");
+  const existingMap = {};
+  existingLessons.forEach(l => {
+    if (l.id != null) {
+      existingMap[String(l.id)] = l;
+    }
+  });
+
+  let backendLessons = [];
+  try {
+    const url = `http://localhost:4000/api/lessons?teacherEmail=${encodeURIComponent(
+      user.email
+    )}&studentEmail=${encodeURIComponent(activeEmail)}`;
+    const res = await fetch(url);
+    if (!res.ok) {
+      upcomingList.innerHTML = "<p>Error loading lessons.</p>";
+      updateRecap({
+        counts: { total: 0, completed: 0, paid: 0, unpaid: 0, upcoming: 0, partial: 0 }
+      });
+      return;
+    }
+    const data = await res.json();
+    backendLessons = data.lessons || [];
+  } catch (err) {
+    console.error("Error fetching lessons:", err);
+    upcomingList.innerHTML = "<p>Error loading lessons.</p>";
+    updateRecap({
+      counts: { total: 0, completed: 0, paid: 0, unpaid: 0, upcoming: 0, partial: 0 }
+    });
+    return;
+  }
+
+  if (!backendLessons.length) {
+    upcomingList.innerHTML = "<p>No lessons found.</p>";
+    updateRecap({
+      counts: { total: 0, completed: 0, paid: 0, unpaid: 0, upcoming: 0, partial: 0 }
+    });
+    return;
+  }
+
+  // Merge backend lessons with stored billing metadata
+  const nowLocal = new Date();
+
+  const mergedLessons = backendLessons.map(raw => {
+    const idKey = String(raw.id);
+    const stored = existingMap[idKey] || {};
+
+    const dt = getLessonDateTime({
+      startUtc: raw.startUtc
+    });
+
+    const completed =
+      // If we've stored a manual choice before, respect it
+      Object.prototype.hasOwnProperty.call(stored, "completed")
+        ? stored.completed === true
+        // Otherwise: default completed = true if in the past, else false
+        : dt < nowLocal;
+
+    return {
+      id: raw.id,
+      teacherEmail: raw.teacherEmail,
+      studentEmail: raw.studentEmail,
+      startUtc: raw.startUtc,
+      topic: raw.topic || "", 
+      link: raw.link || "",
+
+      // billing metadata
+      completed,
+      rate:
+        typeof stored.rate === "number" && !isNaN(stored.rate) && stored.rate > 0
+          ? stored.rate
+          : activeRate || 30,
+      amountPaid:
+        typeof stored.amountPaid === "number" &&
+        !isNaN(stored.amountPaid) &&
+        stored.amountPaid >= 0
+          ? stored.amountPaid
+          : 0
+    };
+  });
+
+  const payments = JSON.parse(localStorage.getItem(paymentKey) || "[]");
+
+  // Compute billing state
+  const { lessons, counts } = computeBillingState(mergedLessons, payments);
+
+  // Persist normalized lessons (with rate + amountPaid)
+  localStorage.setItem(key, JSON.stringify(lessons));
+
+  const now = new Date();
+
+  lessons.forEach((lesson, index) => {
+    const dt = getLessonDateTime(lesson);
+    const isCompleted = lesson.completed === true || dt < now;
+    const fullyPaid = lesson.amountPaid >= lesson.rate;
+    const partiallyPaid = lesson.amountPaid > 0 && lesson.amountPaid < lesson.rate;
+    const localLabel = formatLocalFromUtc(lesson.startUtc || dt.toISOString());
+
+    if (!isCompleted) {
+      // UPCOMING
+      const card = document.createElement("div");
+      card.className = "lesson-card";
+      card.innerHTML = `
+        <strong>${localLabel}</strong><br>
+        ${lesson.topic}<br>
+        ${
+          lesson.link
+            ? `<a href="${lesson.link}" target="_blank">Lesson Link</a><br>`
+            : ""
+        }
+        <button class="action-btn" onclick="toggleCompleted(${index}, true)">Mark Completed</button>
+      `;
+      upcomingList.appendChild(card);
+    } else {
+      if (fullyPaid) {
+        // COMPLETED + PAID
+        const card = document.createElement("div");
+        card.className = "lesson-card-minimal";
+        card.innerHTML = `
+          <strong>${localLabel}</strong><br>
+          ${lesson.topic}
+          <span class="paid-tag">PAID</span>
+        `;
+        completedPaidList.appendChild(card);
+      } else {
+        // COMPLETED + UNPAID / PARTIALLY PAID
+        const card = document.createElement("div");
+        card.className = "lesson-card";
+        const tagHtml = partiallyPaid
+          ? `<span class="partial-tag">PARTIALLY PAID (£${lesson.amountPaid} / £${lesson.rate})</span>`
+          : `<span class="unpaid-tag">UNPAID</span>`;
+
+        card.innerHTML = `
+          <strong>${localLabel}</strong><br>
+          ${lesson.topic}
+          ${tagHtml}
+          <br><br>
+          <button class="action-btn" onclick="revertToUpcoming(${index})">Revert to Upcoming</button>
+        `;
+        completedUnpaidList.appendChild(card);
+      }
+    }
+  });
+
+  if (!upcomingList.innerHTML.trim()) {
+    upcomingList.innerHTML = "<p>No upcoming lessons.</p>";
+  }
+  if (!completedUnpaidList.innerHTML.trim()) {
+    completedUnpaidList.innerHTML = "<p>No unpaid completed lessons.</p>";
+  }
+  if (!completedPaidList.innerHTML.trim()) {
+    completedPaidList.innerHTML = "<p>No paid lessons yet.</p>";
+  }
+
+  updateRecap({ counts });
+}
+
+/* ===========================================================
+   TOGGLE COMPLETED (UPCOMING ↔ COMPLETED)
+   =========================================================== */
+function toggleCompleted(index, checked) {
+  if (!activeEmail) return;
+
+  const key = `${activeEmail}-lessons-json`;
+  const lessons = JSON.parse(localStorage.getItem(key) || "[]");
+
+  if (!lessons[index]) return;
+
+  lessons[index].completed = !!checked;
+  // When reverting to upcoming, reset amountPaid; when marking completed,
+  // amountPaid will be filled by payment allocation logic.
+  if (!checked) {
+    lessons[index].amountPaid = 0;
+  }
+
+  localStorage.setItem(key, JSON.stringify(lessons));
+
+  loadBillingLessons();
+  loadOutstanding();
+}
+
+/* ===========================================================
+   REVERT TO UPCOMING
+   =========================================================== */
+function revertToUpcoming(index) {
+  if (!activeEmail) return;
+
+  const key = `${activeEmail}-lessons-json`;
+  const lessons = JSON.parse(localStorage.getItem(key) || "[]");
+
+  if (!lessons[index]) return;
+
+  lessons[index].completed = false;
+  lessons[index].amountPaid = 0;
+
+  localStorage.setItem(key, JSON.stringify(lessons));
+
+  loadBillingLessons();
+  loadOutstanding();
+}
+
+/* ===========================================================
+   OUTSTANDING BALANCE
+   =========================================================== */
+function loadOutstanding() {
+  if (!activeEmail) return;
+
+  const key = `${activeEmail}-lessons-json`;
+  const lessons = JSON.parse(localStorage.getItem(key) || "[]");
+
+  const paymentKey = `${activeEmail}-payment-history`;
+  const payments = JSON.parse(localStorage.getItem(paymentKey) || "[]");
+
+  const { outstandingRaw } = computeBillingState(lessons, payments);
+
+  const overrideKey = `${activeEmail}-override-outstanding`;
+  const overrideValue = localStorage.getItem(overrideKey);
+
+  const outstandingElem = document.getElementById("outstanding-amount");
+  const overrideNoteElem = document.getElementById("override-note");
+  const overrideInput = document.getElementById("override-outstanding-input");
+
+  if (overrideValue !== null && overrideValue !== "") {
+
+    const overrideNumber = Number(overrideValue);
+
+    if (overrideNumber < 0) {
+        outstandingElem.textContent = `Credit: £${Math.abs(overrideNumber)}`;
+    } else {
+        outstandingElem.textContent = `Outstanding: £${overrideNumber}`;
+    }
+
+    overrideNoteElem.textContent = `Outstanding overridden (calculated would be £${outstandingRaw}).`;
+    overrideNoteElem.style.display = "block";
+    overrideInput.value = overrideNumber;
+
+  } else {
+
+      if (outstandingRaw < 0) {
+          outstandingElem.textContent = `Credit: £${Math.abs(outstandingRaw)}`;
+      } else {
+          outstandingElem.textContent = `Outstanding: £${outstandingRaw}`;
+      }
+
+      overrideNoteElem.style.display = "none";
+      overrideInput.value = "";
+  }
+}
+
+/* ===========================================================
+   OVERRIDE OUTSTANDING
+   =========================================================== */
+function applyOverrideOutstanding() {
+  if (!activeEmail) return;
+  const value = document.getElementById("override-outstanding-input").value;
+  const key = `${activeEmail}-override-outstanding`;
+
+  if (value === "" || value === null) {
+    alert("Please enter a value to override.");
+    return;
+  }
+
+  localStorage.setItem(key, String(Number(value)));
+  loadOutstanding();
+}
+
+function clearOverrideOutstanding() {
+  if (!activeEmail) return;
+  const key = `${activeEmail}-override-outstanding`;
+  localStorage.removeItem(key);
+  loadOutstanding();
+}
+
+/* ===========================================================
+   LESSON RATE
+   =========================================================== */
+function saveLessonRate() {
+  if (!activeEmail) return;
+  const input = document.getElementById("lesson-rate-input");
+  const value = Number(input.value);
+
+  if (!value || value <= 0) {
+    alert("Please enter a valid lesson rate.");
+    return;
+  }
+
+  activeRate = value;
+  localStorage.setItem(`${activeEmail}-lessonRate`, String(value));
+
+  // Future lessons (created elsewhere) should use this new rate.
+  // Existing lessons keep their own 'rate' values.
+
+  loadOutstanding();
+  loadBillingLessons();
+}
+
+/* ===========================================================
+   ADD PAYMENTS
+   =========================================================== */
+function addManualPayment() {
+  if (!activeEmail) return;
+
+  const payeeField = document.getElementById("manual-payment-payee");
+  const methodField = document.getElementById("manual-payment-method");
+  const amountField = document.getElementById("manual-payment-amount");
+  const dateField = document.getElementById("manual-payment-date");
+
+  const payee = payeeField.value.trim();
+  const method = methodField.value;
+  const amount = Number(amountField.value);
+  const date = dateField.value;
+
+  if (!amount || amount <= 0 || !date) {
+    alert("Please fill amount and date.");
+    return;
+  }
+
+  const key = `${activeEmail}-payment-history`;
+  const history = JSON.parse(localStorage.getItem(key) || "[]");
+
+  history.push({
+    payee: payee || "Unknown",
+    method,
+    amount,
+    date
+  });
+
+  localStorage.setItem(key, JSON.stringify(history));
+
+  // CLEAR FIELDS
+  payeeField.value = "";
+  methodField.value = "";
+  amountField.value = "";
+  dateField.value = "";
+
+  // Recompute allocation and outstanding
+  loadBillingLessons();
+  loadOutstanding();
+  loadPaymentHistory();
+}
+
+/* ===========================================================
+   PAYMENT HISTORY
+   =========================================================== */
+function loadPaymentHistory() {
+  if (!activeEmail) return;
+
+  const key = `${activeEmail}-payment-history`;
+  const history = JSON.parse(localStorage.getItem(key) || "[]");
+
+  const list = document.getElementById("payment-history");
+  list.innerHTML = "";
+
+  if (!history.length) {
+    list.innerHTML = "<p>No payments recorded.</p>";
+    return;
+  }
+
+  history.forEach((entry, index) => {
+    const div = document.createElement("div");
+    div.className = "lesson-card";
+
+    div.innerHTML = `
+      <strong>£${entry.amount}</strong><br>
+      ${entry.date}<br>
+      <em>Payee: ${entry.payee || "Unknown"}</em><br>
+      <em>Method: ${entry.method || "Unknown"}</em><br><br>
+      <button onclick="deletePayment(${index})" style="background:#ffdddd;">Delete</button>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function deletePayment(index) {
+  if (!activeEmail) return;
+
+  const key = `${activeEmail}-payment-history`;
+  const history = JSON.parse(localStorage.getItem(key) || "[]");
+
+  if (!history[index]) return;
+
+  history.splice(index, 1);
+  localStorage.setItem(key, JSON.stringify(history));
+
+  // Recompute allocation and outstanding
+  loadBillingLessons();
+  loadOutstanding();
+  loadPaymentHistory();
+}
+
+/* ===========================================================
+   INIT
+   =========================================================== */
+loadTeacherStudents();
+</script>
+
+</body>
+</html>

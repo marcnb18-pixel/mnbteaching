@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Client Portal – MN Tutoring</title>
+
+  <!-- Fonts + Main CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="design.css" />
+</head>
+
+<body>
+
+  <!-- ✅ HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo-container">
+        <img src="logo-MNBTeaching.png" alt="MN Teaching Logo">
+      </div>
+
+      <nav class="nav-center">
+        <a href="index.html">Home</a>
+        <a href="#about">About Me</a>
+        <a href="#faq">FAQ</a>
+        <a href="#reviews">Reviews</a>
+        <a href="#contact">Contact</a>
+        <a href="client-portal.html">Client Portal</a>
+        <a href="de.html" class="lang-flag">
+          <img src="germany.png" alt="Deutsch">
+        </a>
+      </nav>
+
+      <!-- ✅ Mobile hamburger -->
+      <div class="hamburger" id="hamburger">
+        <div class="line"><span></span></div>
+        <div class="line"><span></span></div>
+        <div class="line"><span></span></div>
+    </div>
+
+      <!-- ✅ Mobile menu -->
+      <div class="mobile-menu" id="mobileMenu">
+        <a href="index.html">Home</a>
+        <a href="#about">About Me</a>
+        <a href="#faq">FAQ</a>
+        <a href="#reviews">Reviews</a>
+        <a href="#contact">Contact</a>
+        <a href="client-portal.html">Client Portal</a>
+        <a href="de.html" class="lang-flag">
+          <img src="germany.png" alt="Deutsch">
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ✅ LOGIN SECTION -->
+  <section style="padding: 80px 20px; background-color: #fff7de;">
+    <div style="
+      max-width: 420px;
+      margin: 0 auto;
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      text-align: center;
+    ">
+      <h2 style="color: #1c3b5a; margin-bottom: 24px;">Client Portal Login</h2>
+
+      <form id="login-form">
+        <input id="email" type="email" placeholder="Email" required
+          style="width: 100%; padding: 12px; margin-bottom: 14px; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem;">
+
+        <div style="position: relative; margin-bottom: 20px;">
+  <div style="position: relative; margin-bottom: 20px; width: 100%; box-sizing: border-box;">
+    
+  <input id="password" type="password" placeholder="Passwort" required
+    style="
+          width: 100%;
+          padding: 12px 42px 12px 12px;
+          border-radius: 8px;
+          border: 1px solid #ccc;
+          font-size: 1rem;
+          box-sizing: border-box;
+        ">
+
+      <button type="button" id="toggle-password"
+        style="
+          position: absolute;
+          right: 10px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-size: 1.2rem;
+          color: #000;
+          padding: 0;
+          width: 24px;
+          height: 24px;
+        ">
+        &#128065;
+      </button>
+    </div>
+
+        <button type="submit"
+          style="width: 100%; padding: 14px; background-color: #3ecacb; color: white; border: none; border-radius: 8px; font-size: 1.1rem; cursor: pointer;">
+          Log In
+        </button>
+      </form>
+
+      <pre id="output" style="margin-top: 20px; color: #1c3b5a;"></pre>
+    </div>
+  </section>
+
+<script>
+  const form = document.getElementById('login-form');
+  const output = document.getElementById('output');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    output.textContent = "Logging in...";
+
+    try {
+      const res = await fetch('http://localhost:4000/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+
+      if (data.error) {
+        output.textContent = data.error;
+        return;
+      }
+
+      // ✅ Save user to localStorage so dashboard can load it
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      output.textContent = "Success! Redirecting...";
+
+      setTimeout(() => {
+        window.location.href = "dashboard.html"; // ✅ Correct redirect
+      }, 600);
+
+    } catch (err) {
+      output.textContent = "Network error: " + err.message;
+    }
+  });
+
+// ✅ Toggle password visibility
+document.getElementById("toggle-password").addEventListener("click", () => {
+  const pw = document.getElementById("password");
+  pw.type = pw.type === "password" ? "text" : "password";
+});
+
+</script>
+
+<script src="main.js"></script>
+</body>
+</html>

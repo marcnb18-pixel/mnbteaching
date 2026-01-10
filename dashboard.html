@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MN Teaching — Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="design.css">
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+
+    <!-- Logo -->
+    <div class="logo-container">
+      <img src="logo-MNBTeaching.png" alt="MN Teaching Logo">
+    </div>
+
+    <!-- Desktop Navigation -->
+    <nav class="nav-center">
+      <a id="nav-dashboard" href="dashboard.html">Dashboard</a>
+      <a id="nav-payments" href="payments.html">Payments</a>
+
+      <!-- Teacher-only admin links (hidden by default) -->
+      <a id="nav-admin-dashboard" href="admin-dashboard.html" style="display:none;">Admin Dashboard</a>
+      <a id="nav-client-manager" href="client-manager.html" style="display:none;">Client Manager</a>
+      <a id="nav-admin-payments" href="admin-payments.html" style="display:none;">Billing Console</a>
+
+      <a href="dashboard-de.html" class="lang-flag">
+        <img src="germany.png" alt="Deutsch">
+      </a>
+    </nav>
+
+    <!-- Logout (desktop) -->
+    <div class="header-right">
+      <button class="logout-btn" id="change-password-btn-desktop" style="margin-right: 10px;">
+        Change Password
+      </button>
+      <button class="logout-btn" id="logout-btn">Logout</button>
+    </div>
+
+    <!-- Hamburger -->
+    <div class="hamburger" id="hamburger">
+      <div class="line"><span></span></div>
+      <div class="line"><span></span></div>
+      <div class="line"><span></span></div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <a id="mnav-dashboard" href="dashboard.html">Dashboard</a>
+      <a id="mnav-payments" href="payments.html">Payments</a>
+
+      <!-- Teacher-only admin links (hidden by default) -->
+      <a id="mnav-admin-dashboard" href="admin-dashboard.html" style="display:none;">Admin Dashboard</a>
+      <a id="mnav-client-manager" href="client-manager.html" style="display:none;">Client Manager</a>
+      <a id="mnav-admin-payments" href="admin-payments.html" style="display:none;">Billing Console</a>
+
+      <a href="dashboard-de.html" class="lang-flag">
+        <img src="germany.png" alt="Deutsch">
+      </a>
+
+      <button class="logout-btn" id="change-password-btn-mobile" style="margin-top: 10px;">
+        Change Password
+      </button>
+
+      <button class="logout-btn" id="logout-btn-mobile">Logout</button>
+    </div>
+
+  </div>
+</header>
+
+<div class="welcome-hero">
+  <h2 id="welcome-name">Welcome!</h2>
+  <p id="welcome-subtext"></p>
+</div>
+
+<div class="content">
+
+  <!-- TEACHER VIEW -->
+  <div id="teacher-students" class="section-card" style="display:none;">
+    <h3>Your Students</h3>
+    <div id="teacher-student-list" class="teacher-student-list"></div>
+  </div>
+
+  <div id="viewing-student-label" style="display:none;"></div>
+
+  <!-- STUDENT/PARENT VIEW -->
+  <div id="dashboard-sections" style="display:none;">
+
+    <div id="lessons" class="section-card">
+      <h3>Upcoming Lessons</h3>
+      <div id="lesson-list"></div>
+      <p id="no-lessons-msg">No lessons scheduled yet.</p>
+    </div>
+
+    <div id="homework" class="section-card">
+      <h3>Homework</h3>
+      <div id="homework-content"><p>No homework assigned yet.</p></div>
+    </div>
+
+    <div id="progress" class="section-card">
+      <h3>Progress Reports</h3>
+      <div id="progress-content"><p>No progress reports available yet.</p></div>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="main.js"></script>
+
+<script>
+/* ===========================================================
+   Time helpers (UTC → local)
+   =========================================================== */
+function formatLocalFromUtc(utcIso) {
+  const d = new Date(utcIso);
+  return d.toLocaleString([], {
+    dateStyle: "medium",
+    timeStyle: "short"
+  });
+}
+
+/* ===========================================================
+   Load logged-in user
+   =========================================================== */
+let user = JSON.parse(localStorage.getItem("user"));
+if (!user) window.location.href = "client-portal.html";
+
+user.email = user.email.toLowerCase();
+localStorage.setItem("user", JSON.stringify(user));
+
+let activeEmail = user.email;
+
+/* ===========================================================
+   Logout
+   =========================================================== */
+function logout() {
+  localStorage.removeItem("user");
+  window.location.href = "client-portal.html";
+}
+const logoutBtn = document.getElementById("logout-btn");
+if (logoutBtn) logoutBtn.onclick = logout;
+
+const logoutBtnMobile = document.getElementById("logout-btn-mobile");
+if (logoutBtnMobile) logoutBtnMobile.onclick = logout;
+
+/* ===========================================================
+   Helpers
+   =========================================================== */
+function hide(id) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = "none";
+}
+
+function show(id) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = "block";
+}
+
+/* ===========================================================
+   Resolve teacher email for active student
+   =========================================================== */
+let teacherEmailForActive = null;
+
+async function resolveTeacherEmailForActive() {
+  // Teacher viewing a student
+  if (user.role === "teacher") {
+    return user.email.toLowerCase();
+  }
+
+  // Student viewing their own dashboard
+  if (user.role === "student") {
+    if (user.teacherEmail) return user.teacherEmail.toLowerCase();
+    return null;
+  }
+
+  // Parent viewing their child's dashboard
+  if (user.role === "parent") {
+    if (teacherEmailForActive) return teacherEmailForActive;
+
+    const res = await fetch("http://localhost:4000/api/users");
+    const data = await res.json();
+    const child = (data.users || []).find(
+      u => u.email.toLowerCase() === activeEmail
+    );
+
+    teacherEmailForActive = child && child.teacherEmail
+      ? child.teacherEmail.toLowerCase()
+      : null;
+
+    return teacherEmailForActive;
+  }
+
+  return null;
+}
+
+/* ===========================================================
+   Load lessons (from backend, upcoming only)
+   =========================================================== */
+async function loadLessons() {
+  const list = document.getElementById("lesson-list");
+  const noMsg = document.getElementById("no-lessons-msg");
+
+  list.innerHTML = "";
+  noMsg.style.display = "none";
+
+  if (!activeEmail) {
+    noMsg.textContent = "No student selected.";
+    noMsg.style.display = "block";
+    return;
+  }
+
+  const teacherEmail = await resolveTeacherEmailForActive();
+
+  if (!teacherEmail) {
+    noMsg.textContent = "No teacher assigned yet.";
+    noMsg.style.display = "block";
+    return;
+  }
+
+  try {
+    const url = `http://localhost:4000/api/lessons?teacherEmail=${encodeURIComponent(
+      teacherEmail
+    )}&studentEmail=${encodeURIComponent(activeEmail)}`;
+
+    const res = await fetch(url);
+    if (!res.ok) {
+      noMsg.textContent = "Error loading lessons.";
+      noMsg.style.display = "block";
+      return;
+    }
+
+    const data = await res.json();
+    const lessons = data.lessons || [];
+
+    if (!lessons.length) {
+      noMsg.textContent = "No lessons scheduled yet.";
+      noMsg.style.display = "block";
+      return;
+    }
+
+    const now = new Date();
+
+    // Only show lessons whose end time + 1 hour is still in the future
+    const upcoming = lessons.filter(lesson => {
+      const start = new Date(lesson.startUtc);
+      const endPlusOneHour = new Date(start.getTime() + 60 * 60 * 1000);
+      return endPlusOneHour > now;
+    });
+
+    if (!upcoming.length) {
+      noMsg.textContent = "No upcoming lessons.";
+      noMsg.style.display = "block";
+      return;
+    }
+
+    noMsg.style.display = "none";
+
+    upcoming
+      .sort((a, b) => new Date(a.startUtc) - new Date(b.startUtc))
+      .forEach(lesson => {
+        const card = document.createElement("div");
+        card.className = "lesson-card";
+
+        const localLabel = formatLocalFromUtc(lesson.startUtc);
+
+        card.innerHTML = `
+          <strong>${localLabel}</strong><br>
+          ${lesson.topic || ""}<br>
+          ${
+            lesson.link
+              ? `<a href="${lesson.link}" target="_blank">Join Google Meet</a>`
+              : ""
+          }
+        `;
+
+        list.appendChild(card);
+      });
+  } catch (err) {
+    console.error("Error loading lessons:", err);
+    noMsg.textContent = "Error loading lessons. Please try again.";
+    noMsg.style.display = "block";
+  }
+}
+
+/* ===========================================================
+   Load homework & progress
+   =========================================================== */
+function loadOtherData() {
+  document.getElementById("homework-content").innerHTML =
+    localStorage.getItem(`${activeEmail}-homework`) || "<p>No homework assigned yet.</p>";
+
+  document.getElementById("progress-content").innerHTML =
+    localStorage.getItem(`${activeEmail}-progress`) || "<p>No progress reports yet.</p>";
+}
+
+/* ===========================================================
+   Auto-refresh for lessons
+   =========================================================== */
+let lessonsRefreshInterval = null;
+
+function startLessonsAutoRefresh() {
+  if (lessonsRefreshInterval) {
+    clearInterval(lessonsRefreshInterval);
+  }
+  lessonsRefreshInterval = setInterval(() => {
+    loadLessons();
+  }, 60 * 1000); // every 60 seconds
+}
+
+/* ===========================================================
+   Teacher: Load list of students
+   =========================================================== */
+async function loadTeacherStudents() {
+  const res = await fetch(`http://localhost:4000/api/students-by-teacher/${user.email}`);
+  const data = await res.json();
+
+  const list = document.getElementById("teacher-student-list");
+  list.innerHTML = "";
+
+  if (!data.students.length) {
+    list.innerHTML = "<p>You have no assigned students yet.</p>";
+    return;
+  }
+
+  data.students.forEach(s => {
+    const div = document.createElement("div");
+    div.textContent = `${s.name} (${s.email})`;
+
+    div.onclick = () => {
+      activeEmail = s.email.toLowerCase();
+      const label = document.getElementById("viewing-student-label");
+      label.textContent = `Viewing student: ${s.name}`;
+      label.style.display = "block";
+
+      show("dashboard-sections");
+      loadLessons();
+      loadOtherData();
+      startLessonsAutoRefresh();
+    };
+
+    list.appendChild(div);
+  });
+}
+
+/* ===========================================================
+   Main Dashboard Initializer
+   =========================================================== */
+function initDashboard() {
+  document.getElementById("welcome-name").innerHTML =
+     `Welcome back,<br>${user.name}!`;
+
+  /* TEACHER VIEW */
+  if (user.role === "teacher") {
+    document.getElementById("welcome-subtext").textContent =
+      "Here are your students. Click a student to view their dashboard.";
+
+    show("teacher-students");
+    hide("dashboard-sections");
+
+    // Payments hidden for teachers
+    hide("nav-payments");
+    hide("mnav-payments");
+
+    // Teacher-only admin links
+    show("nav-admin-dashboard");
+    show("mnav-admin-dashboard");
+    show("nav-client-manager");
+    show("mnav-client-manager");
+    show("nav-admin-payments");
+    show("mnav-admin-payments");
+
+    loadTeacherStudents();
+    return;
+  }
+
+  /* PARENT VIEW */
+  if (user.role === "parent") {
+    activeEmail = user.childEmail.toLowerCase();
+
+    document.getElementById("welcome-subtext").textContent =
+      "You are viewing your child's learning dashboard.";
+
+    show("dashboard-sections");
+
+    // Payments visible for parents
+    show("nav-payments");
+    show("mnav-payments");
+
+    loadLessons();
+    loadOtherData();
+    startLessonsAutoRefresh();
+    return;
+  }
+
+  /* STUDENT VIEW */
+  if (user.role === "student") {
+    document.getElementById("welcome-subtext").textContent =
+      "Here is your personal learning dashboard.";
+
+    // If you don't have nav-progress links, these hide calls are harmless
+    hide("nav-progress");
+    hide("mnav-progress");
+    hide("progress");
+
+    // Payments hidden for students
+    hide("nav-payments");
+    hide("mnav-payments");
+
+    show("dashboard-sections");
+
+    loadLessons();
+    loadOtherData();
+    startLessonsAutoRefresh();
+    return;
+  }
+}
+
+/* ===========================================================
+   Start Dashboard
+   =========================================================== */
+initDashboard();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>MN Teaching — Admin-Dashboard</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="design.css">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      background-color: #fff7de;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #1c3b5a;
+    }
+
+    .admin-container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .collapse-header {
+      width: 100%;
+      background: #1c3b5a;
+      color: #fff7de;
+      padding: 18px 22px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    }
+
+    .collapse-header:hover { opacity: 0.9; }
+
+    .collapse-content {
+      background: #1c3b5a;
+      color: #fff7de;
+      padding: 28px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+      display: none;
+    }
+
+    select, textarea, input[type="date"], input[type="time"], input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: 2px solid #fff7de;
+      background: #fff7de;
+      color: #1c3b5a;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    button {
+      background-color: #fff7de;
+      color: #1c3b5a;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: 0.25s ease;
+      margin-right: 10px;
+    }
+
+    button:hover { opacity: 0.8; }
+
+    .lesson-card {
+      background: #fff7de;
+      color: #1c3b5a;
+      padding: 15px;
+      border-radius: 10px;
+      border: 2px solid #1c3b5a;
+      margin-bottom: 12px;
+    }
+
+    .teacher-student-list div {
+      padding: 12px;
+      background: white;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      border: 1px solid var(--accent);
+    }
+
+    .teacher-student-list div:hover { background: var(--accent); }
+  </style>
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+
+    <div class="logo-container">
+      <img src="logo-MNBTeaching.png" alt="MN Teaching Logo">
+    </div>
+
+    <nav class="nav-center">
+      <a id="nav-dashboard" href="dashboard-de.html">Dashboard</a>
+      <a id="nav-admin-dashboard" href="admin-dashboard-de.html">Admin-Dashboard</a>
+      <a id="nav-client-manager" href="client-manager-de.html">Manager</a>
+      <a id="nav-admin-payments" href="admin-payments-de.html">Zahlungen</a>
+
+      <a href="admin-dashboard.html" class="lang-flag">
+        <img src="uk.png" alt="English">
+      </a>
+    </nav>
+
+    <div class="header-right">
+      <button class="logout-btn" id="change-password-btn-desktop" style="margin-right: 10px;">
+        Passwort ändern
+      </button>
+      <button class="logout-btn" id="logout-btn">Abmelden</button>
+    </div>
+
+    <div class="hamburger" id="hamburger">
+      <div class="line"><span></span></div>
+      <div class="line"><span></span></div>
+      <div class="line"><span></span></div>
+    </div>
+
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="dashboard-de.html">Dashboard</a>
+      <a href="admin-dashboard-de.html">Admin-Dashboard</a>
+      <a href="client-manager-de.html">Manager</a>
+      <a href="admin-payments-de.html">Zahlungen</a>
+
+      <a href="admin-dashboard.html" class="lang-flag">
+        <img src="uk.png" alt="English">
+      </a>
+
+      <button class="logout-btn" id="change-password-btn-mobile" style="margin-top: 10px;">
+        Passwort ändern
+      </button>
+
+      <button class="logout-btn" id="logout-btn-mobile">Abmelden</button>
+    </div>
+
+  </div>
+</header>
+
+<div class="admin-container">
+
+  <h2 style="margin-bottom: 20px;">Admin-Dashboard</h2>
+  <p>Wähle einen Schüler aus, um seine Daten zu bearbeiten.</p>
+
+  <div id="teacher-students" class="section-card">
+    <h3>Deine Schüler</h3>
+    <div id="teacher-student-list" class="teacher-student-list"></div>
+  </div>
+
+  <div id="selected-student-label" style="font-weight:600; margin-top:20px; display:none;"></div>
+
+  <div id="admin-sections" style="display:none; margin-top:30px;">
+
+    <!-- HOMEWORK -->
+    <div class="collapse-header">Hausaufgaben <span>›</span></div>
+    <div class="collapse-content">
+      <textarea id="admin-homework" rows="4"></textarea>
+      <button onclick="saveData('homework')">Hausaufgaben speichern</button>
+    </div>
+
+    <!-- PROGRESS REPORTS -->
+    <div class="collapse-header">Fortschrittsberichte <span>›</span></div>
+    <div class="collapse-content">
+      <textarea id="admin-progress" rows="4"></textarea>
+      <button onclick="saveData('progress')">Fortschritt speichern</button>
+    </div>
+
+    <!-- LESSON CALENDAR -->
+    <div class="collapse-header">Unterrichtskalender <span>›</span></div>
+    <div class="collapse-content">
+
+      <p style="margin-top:0; font-size:0.9rem;">
+        Alle hier eingegebenen Zeiten werden als <strong>CET</strong> interpretiert und in <strong>UTC</strong> gespeichert.
+      </p>
+
+      <label>Datum (CET)</label>
+      <input type="date" id="lesson-date">
+
+      <label>Uhrzeit (CET)</label>
+      <input type="time" id="lesson-time">
+
+      <label>Thema</label>
+      <input type="text" id="lesson-topic" placeholder="z. B. Algebraische Umformungen">
+
+      <label>Google‑Meet‑Link</label>
+      <input type="text" id="lesson-link" placeholder="https://meet.google.com/...">
+
+      <button type="button" onclick="addLesson()">Unterricht hinzufügen</button>
+
+      <h3 style="margin-top:30px;">Bevorstehende Unterrichtsstunden</h3>
+      <div id="lesson-list"></div>
+
+      <h3 style="margin-top:30px;">Unterrichtsverlauf</h3>
+      <div id="lesson-history"></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script src="main.js"></script>
+
+<script>
+/* ===========================================================
+   AUTH
+   =========================================================== */
+let user = JSON.parse(localStorage.getItem("user"));
+if (!user) window.location.href = "client-portal-de.html";
+if (user.role !== "teacher") window.location.href = "dashboard-de.html";
+
+user.email = user.email.toLowerCase();
+localStorage.setItem("user", JSON.stringify(user));
+
+document.getElementById("logout-btn").onclick = logout;
+document.getElementById("logout-btn-mobile").onclick = logout;
+
+function logout() {
+  localStorage.removeItem("user");
+  window.location.href = "client-portal-de.html";
+}
+
+/* ===========================================================
+   COLLAPSIBLES
+   =========================================================== */
+document.querySelectorAll(".collapse-header").forEach(header => {
+  header.addEventListener("click", () => {
+    const content = header.nextElementSibling;
+    const icon = header.querySelector("span");
+
+    if (content.style.display === "block") {
+      content.style.display = "none";
+      icon.textContent = "›";
+    } else {
+      content.style.display = "block";
+      icon.textContent = "⌄";
+    }
+  });
+});
+
+/* ===========================================================
+   LOAD STUDENTS
+   =========================================================== */
+async function loadTeacherStudents() {
+  try {
+    const res = await fetch(
+      `http://localhost:4000/api/students-by-teacher/${encodeURIComponent(user.email)}`
+    );
+    const data = await res.json();
+
+    const list = document.getElementById("teacher-student-list");
+    list.innerHTML = "";
+
+    (data.students || []).forEach(s => {
+      const div = document.createElement("div");
+      div.textContent = `${s.name} (${s.email})`;
+      div.onclick = () => selectStudent(s);
+      list.appendChild(div);
+    });
+  } catch (err) {
+    alert("Fehler beim Laden der Schüler.");
+  }
+}
+
+let activeEmail = null;
+let refreshInterval = null;
+
+/* ===========================================================
+   SELECT STUDENT
+   =========================================================== */
+function selectStudent(student) {
+  activeEmail = student.email.toLowerCase();
+
+  const label = document.getElementById("selected-student-label");
+  label.textContent = `Bearbeitung: ${student.name} (${activeEmail})`;
+  label.style.display = "block";
+
+  document.getElementById("admin-sections").style.display = "block";
+
+  loadClientData();
+  loadLessons();
+
+  if (refreshInterval) clearInterval(refreshInterval);
+  refreshInterval = setInterval(loadLessons, 60000);
+}
+
+/* ===========================================================
+   HOMEWORK / PROGRESS
+   =========================================================== */
+function loadClientData() {
+  document.getElementById("admin-homework").value =
+    localStorage.getItem(`${activeEmail}-homework`) || "";
+
+  document.getElementById("admin-progress").value =
+    localStorage.getItem(`${activeEmail}-progress`) || "";
+}
+
+function saveData(type) {
+  const value = document.getElementById(`admin-${type}`).value;
+  localStorage.setItem(`${activeEmail}-${type}`, value);
+  alert("Gespeichert!");
+}
+
+/* ===========================================================
+   TIME HELPERS
+   =========================================================== */
+function cetToUtcIso(dateStr, timeStr) {
+  const cetString = `${dateStr}T${timeStr}:00+01:00`;
+  return new Date(cetString).toISOString();
+}
+
+function formatLocalFromUtc(utcIso) {
+  return new Date(utcIso).toLocaleString([], {
+    dateStyle: "medium",
+    timeStyle: "short"
+  });
+}
+
+/* ===========================================================
+   ADD LESSON
+   =========================================================== */
+async function addLesson() {
+  if (!activeEmail) return alert("Bitte zuerst einen Schüler auswählen.");
+
+  const date = document.getElementById("lesson-date").value;
+  const time = document.getElementById("lesson-time").value;
+  const topic = document.getElementById("lesson-topic").value.trim();
+  const link = document.getElementById("lesson-link").value.trim();
+
+  if (!date || !time || !topic)
+    return alert("Bitte Datum, Uhrzeit und Thema ausfüllen.");
+
+  const startUtc = cetToUtcIso(date, time);
+
+  const payload = {
+    studentEmail: activeEmail,
+    teacherEmail: user.email,
+    startUtc,
+    topic,
+    link
+  };
+
+  try {
+    const res = await fetch("http://localhost:4000/api/lessons", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) return alert("Fehler beim Erstellen der Unterrichtsstunde.");
+
+    document.getElementById("lesson-date").value = "";
+    document.getElementById("lesson-time").value = "";
+    document.getElementById("lesson-topic").value = "";
+    document.getElementById("lesson-link").value = "";
+
+    loadLessons();
+  } catch {
+    alert("Netzwerkfehler.");
+  }
+}
+
+/* ===========================================================
+   DELETE LESSON
+   =========================================================== */
+async function deleteLesson(id) {
+  if (!confirm("Diese Unterrichtsstunde löschen?")) return;
+
+  try {
+    const res = await fetch(
+      `http://localhost:4000/api/lessons/${encodeURIComponent(id)}`,
+      { method: "DELETE" }
+    );
+
+    if (!res.ok) return alert("Fehler beim Löschen der Unterrichtsstunde.");
+
+    loadLessons();
+  } catch {
+    alert("Netzwerkfehler.");
+  }
+}
+
+/* ===========================================================
+   LOAD LESSONS (Upcoming + History)
+   =========================================================== */
+async function loadLessons() {
+  const upcomingList = document.getElementById("lesson-list");
+  const historyList = document.getElementById("lesson-history");
+
+  upcomingList.innerHTML = "";
+  historyList.innerHTML = "";
+
+  if (!activeEmail) {
+    upcomingList.innerHTML = "<p>Bitte einen Schüler auswählen.</p>";
+    return;
+  }
+
+  try {
+    const url =
+      `http://localhost:4000/api/lessons?teacherEmail=${encodeURIComponent(user.email)}` +
+      `&studentEmail=${encodeURIComponent(activeEmail)}`;
+
+    const res = await fetch(url);
+    const data = await res.json();
+
+    const lessons = data.lessons || [];
+    if (!lessons.length) {
+      upcomingList.innerHTML = "<p>Keine Unterrichtsstunden geplant.</p>";
+      return;
+    }
+
+    const now = new Date();
+
+    const upcoming = [];
+    const history = [];
+
+    lessons.forEach(lesson => {
+      const start = new Date(lesson.startUtc);
+      const endPlusOneHour = new Date(start.getTime() + 60 * 60 * 1000);
+
+      if (endPlusOneHour > now) {
+        upcoming.push(lesson);
+      } else {
+        history.push(lesson);
+      }
+    });
+
+    upcoming.sort((a, b) => new Date(a.startUtc) - new Date(b.startUtc));
+    history.sort((a, b) => new Date(b.startUtc) - new Date(a.startUtc));
+
+    /* Upcoming lessons */
+    upcoming.forEach(lesson => {
+      const card = document.createElement("div");
+      card.className = "lesson-card";
+
+      const localTime = formatLocalFromUtc(lesson.startUtc);
+
+      card.innerHTML = `
+        <strong>${localTime}</strong><br>
+        ${lesson.topic || ""}<br>
+        ${lesson.link ? `<a href="${lesson.link}" target="_blank">Google‑Meet‑Link</a><br>` : ""}
+        <button onclick="deleteLesson('${lesson.id}')" style="
+          margin-top:10px;
+          padding:6px 12px;
+          font-size:0.8rem;
+          background:#ffdddd;
+          border:1px solid #1c3b5a;
+          border-radius:6px;
+        ">Löschen</button>
+      `;
+
+      upcomingList.appendChild(card);
+    });
+
+    if (!upcoming.length) {
+      upcomingList.innerHTML = "<p>Keine bevorstehenden Unterrichtsstunden.</p>";
+    }
+
+    /* Lesson history */
+    history.forEach(lesson => {
+      const card = document.createElement("div");
+      card.className = "lesson-card";
+
+      const localTime = formatLocalFromUtc(lesson.startUtc);
+
+      card.innerHTML = `
+        <strong>${localTime}</strong><br>
+        ${lesson.topic || ""}<br>
+        ${lesson.link ? `<a href="${lesson.link}" target="_blank">Google‑Meet‑Link</a><br>` : ""}
+      `;
+
+      historyList.appendChild(card);
+    });
+
+    if (!history.length) {
+      historyList.innerHTML = "<p>Keine vergangenen Unterrichtsstunden.</p>";
+    }
+
+  } catch (err) {
+    upcomingList.innerHTML = "<p>Fehler beim Laden der Unterrichtsstunden.</p>";
+  }
+}
+
+/* ===========================================================
+   INIT
+   =========================================================== */
+loadTeacherStudents();
+</script>
+
+</body>
+</html>

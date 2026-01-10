@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Client Manager — MN Teaching</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="design.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #fff7de;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #1c3b5a;
+    }
+
+    .manager-container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .card {
+      background-color: #1c3b5a;
+      color: #fff7de;
+      padding: 32px;
+      border-radius: 14px;
+      margin-bottom: 30px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: 2px solid #1c3b5a;
+      background: #fff7de;
+      color: #1c3b5a;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    button {
+      background-color: #fff7de;
+      color: #1c3b5a;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: 0.25s ease;
+    }
+
+    button:hover {
+      opacity: 0.8;
+    }
+
+    .client-item {
+      background-color: #fff7de;
+      color: #1c3b5a;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      border: 2px solid #1c3b5a;
+    }
+
+    .client-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .client-actions button {
+      margin-left: 10px;
+    }
+
+    .small-btn {
+      padding: 6px 12px;
+      font-size: 0.85rem;
+    }
+
+    .role-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: #1c3b5a;
+      color: #fff7de;
+      margin-top: 4px;
+    }
+
+    .edit-card {
+      background: #fff7de;
+      border: 2px solid #1c3b5a;
+      border-radius: 10px;
+      padding: 8px 12px;
+      margin-top: 12px;
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.35s ease, opacity 0.35s ease;
+      font-size: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      color: #1c3b5a;
+    }
+
+    .edit-card.open {
+      max-height: 900px;
+      opacity: 1;
+    }
+
+    .edit-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .save-btn {
+      background: #3ecacb;
+      color: white;
+      flex: 1;
+    }
+
+    .cancel-btn {
+      background: #1c3b5a;
+      color: #fff7de;
+      flex: 1;
+    }
+
+    #message-panel {
+      position: fixed;
+      top: 0;
+      right: -450px;
+      width: 380px;
+      height: 100vh;
+      background: #1c3b5a;
+      color: #fff7de;
+      padding: 40px 30px;
+      box-shadow: -4px 0 12px rgba(0,0,0,0.3);
+      transition: right 0.35s ease;
+      overflow-y: auto;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    #message-panel.open {
+      right: 0;
+    }
+
+    #message-panel button {
+      margin-top: 20px;
+      width: 100%;
+    }
+
+    #message-content {
+      white-space: pre-wrap;
+      line-height: 1.5;
+      margin-top: 20px;
+    }
+
+    .section-title {
+      margin-top: 10px;
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+
+    <div class="logo-container">
+      <img src="logo-MNBTeaching.png" alt="MN Teaching Logo">
+    </div>
+
+    <nav class="nav-center">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="admin-dashboard.html">Admin Dashboard</a>
+      <a href="client-manager.html">Client Manager</a>
+      <a href="admin-payments.html">Billing Console</a>
+
+      <a href="client-manager-de.html" class="lang-flag">
+        <img src="germany.png" alt="Deutsch">
+      </a>
+    </nav>
+
+    <div class="header-right">
+      <button class="logout-btn" id="change-password-btn-desktop" style="margin-right: 10px;">
+        Change Password
+      </button>
+      <button class="logout-btn" id="logout-btn">Logout</button>
+    </div>
+
+    <div class="hamburger" id="hamburger">
+      <div class="line"><span></span></div>
+      <div class="line"><span></span></div>
+      <div class="line"><span></span></div>
+    </div>
+
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="admin-dashboard.html">Admin Dashboard</a>
+      <a href="client-manager.html">Client Manager</a>
+      <a href="admin-payments.html">Billing Console</a>
+
+      <a href="client-manager-de.html" class="lang-flag">
+        <img src="germany.png" alt="Deutsch">
+      </a>
+
+      <button class="logout-btn" id="change-password-btn-mobile" style="margin-top: 10px;">
+        Change Password
+      </button>
+
+      <button class="logout-btn" id="logout-btn-mobile">Logout</button>
+    </div>
+
+  </div>
+</header>
+
+<div class="manager-container">
+
+  <h2 style="margin-bottom: 20px;">Client Manager</h2>
+  <p>Manage all clients, edit details, assign teachers, and generate onboarding messages.</p>
+
+  <!-- ADD CLIENT -->
+  <div class="card">
+    <h2>Add New Client</h2>
+
+    <input id="client-name" placeholder="Client Name">
+    <input id="client-email" placeholder="Client Email">
+
+    <label>Role</label>
+    <select id="client-role">
+      <option value="student">Student</option>
+      <option value="parent">Parent</option>
+      <option value="teacher">Teacher</option>
+    </select>
+
+    <div id="teacher-select-container" style="display:none;">
+      <label>Assign Teacher</label>
+      <select id="client-teacher"></select>
+    </div>
+
+    <div id="lesson-rate-container" style="display:none;">
+      <label>Lesson Rate (£)</label>
+      <input id="client-lesson-rate" type="number" min="1" placeholder="e.g. 30">
+    </div>
+
+    <div id="child-select-container" style="display:none;">
+      <label>Assign Child</label>
+      <select id="client-child"></select>
+    </div>
+
+    <div style="display:flex; gap:10px; align-items:center; margin-bottom:20px;">
+      <input id="client-password" placeholder="Password" style="flex:1;">
+      <button type="button" onclick="generatePassword()" class="small-btn">Generate</button>
+    </div>
+
+    <button onclick="addClient()">Add Client</button>
+    <p id="add-output" style="margin-top:10px;"></p>
+  </div>
+
+  <!-- CLIENT LIST -->
+  <div class="card">
+    <h2>All Clients</h2>
+
+    <div class="section-title">Students & Parents</div>
+    <div id="client-list-students-parents"></div>
+
+    <div class="section-title" style="margin-top:25px;">Teachers</div>
+    <div id="client-list-teachers"></div>
+  </div>
+
+</div>
+
+<!-- Slide-in message panel -->
+<div id="message-panel">
+  <h2>Generated Message</h2>
+  <div id="message-content"></div>
+  <button onclick="copyMessage()">Copy</button>
+  <button onclick="closeMessagePanel()">Close</button>
+</div>
+
+<script src="main.js"></script>
+
+<script>
+/* ===========================================================
+   AUTH + ROLE CHECK
+   =========================================================== */
+let user = JSON.parse(localStorage.getItem("user"));
+if (!user) window.location.href = "client-portal.html";
+if (user.role !== "teacher") window.location.href = "dashboard.html";
+
+/* ===========================================================
+   LOGOUT
+   =========================================================== */
+function logout() {
+  localStorage.removeItem("user");
+  window.location.href = "client-portal.html";
+}
+document.getElementById("logout-btn").onclick = logout;
+document.getElementById("logout-btn-mobile").onclick = logout;
+
+/* ===========================================================
+   LOAD USERS
+   =========================================================== */
+let allUsers = [];
+let openEditCard = null;
+
+async function loadUsers() {
+  const res = await fetch("http://localhost:4000/api/users");
+  const data = await res.json();
+  allUsers = data.users;
+}
+
+/* Populate dropdowns for Add Client */
+function populateRoleDropdowns() {
+  const teacherSelect = document.getElementById("client-teacher");
+  const childSelect = document.getElementById("client-child");
+
+  teacherSelect.innerHTML = "";
+  childSelect.innerHTML = "";
+
+  const teachers = allUsers.filter(u => u.role === "teacher");
+  const students = allUsers.filter(u => u.role === "student");
+
+  teachers.forEach(t => {
+    const opt = document.createElement("option");
+    opt.value = t.email;
+    opt.textContent = `${t.name} (${t.email})`;
+    teacherSelect.appendChild(opt);
+  });
+
+  students.forEach(s => {
+    const opt = document.createElement("option");
+    opt.value = s.email;
+    opt.textContent = `${s.name} (${s.email})`;
+    childSelect.appendChild(opt);
+  });
+}
+
+/* Show/hide fields for ADD CLIENT */
+function updateAddClientVisibility() {
+  const role = document.getElementById("client-role").value;
+
+  document.getElementById("teacher-select-container").style.display =
+    role === "student" ? "block" : "none";
+
+  document.getElementById("lesson-rate-container").style.display =
+    role === "student" ? "block" : "none";
+
+  document.getElementById("child-select-container").style.display =
+    role === "parent" ? "block" : "none";
+}
+
+document.getElementById("client-role").addEventListener("change", updateAddClientVisibility);
+
+/* Generate password */
+function generatePassword() {
+  const year = new Date().getFullYear();
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let code = "";
+  for (let i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  document.getElementById("client-password").value = `MN-${year}-${code}`;
+}
+
+/* ===========================================================
+   ADD CLIENT
+   =========================================================== */
+async function addClient() {
+  const name = document.getElementById("client-name").value.trim();
+  const email = document.getElementById("client-email").value.trim();
+  const password = document.getElementById("client-password").value.trim();
+  const role = document.getElementById("client-role").value;
+
+  const lessonRate = role === "student"
+    ? Number(document.getElementById("client-lesson-rate").value) || 30
+    : null;
+
+  const teacherEmail = role === "student"
+    ? document.getElementById("client-teacher").value
+    : null;
+
+  const childEmail = role === "parent"
+    ? document.getElementById("client-child").value
+    : null;
+
+  const output = document.getElementById("add-output");
+
+  if (!name || !email || !password) {
+    output.textContent = "Please fill all fields.";
+    return;
+  }
+
+  const res = await fetch("http://localhost:4000/api/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name,
+      email,
+      password,
+      role,
+      teacherEmail,
+      childEmail,
+      lessonRate
+    })
+  });
+
+  const data = await res.json();
+
+  if (data.error) {
+    output.textContent = "❌ " + data.error;
+    return;
+  }
+
+  output.textContent = "✅ Client created!";
+  await loadClientList();
+
+  // Reset fields to "create student" mode
+  document.getElementById("client-name").value = "";
+  document.getElementById("client-email").value = "";
+  document.getElementById("client-password").value = "";
+  document.getElementById("client-role").value = "student";
+  document.getElementById("client-lesson-rate").value = "";
+  if (document.getElementById("client-teacher").options.length > 0) {
+    document.getElementById("client-teacher").selectedIndex = 0;
+  }
+  if (document.getElementById("client-child").options.length > 0) {
+    document.getElementById("client-child").selectedIndex = 0;
+  }
+
+  updateAddClientVisibility();
+
+  setTimeout(() => {
+    output.textContent = "";
+  }, 2000);
+}
+
+/* ===========================================================
+   LOAD CLIENT LIST
+   - Students & parents grouped (top)
+   - Teachers separate (bottom)
+   =========================================================== */
+async function loadClientList() {
+  await loadUsers();
+  populateRoleDropdowns();
+
+  const spContainer = document.getElementById("client-list-students-parents");
+  const tContainer = document.getElementById("client-list-teachers");
+
+  spContainer.innerHTML = "";
+  tContainer.innerHTML = "";
+
+  const students = allUsers.filter(u => u.role === "student");
+  const parents = allUsers.filter(u => u.role === "parent");
+  const teachers = allUsers.filter(u => u.role === "teacher");
+
+  students.sort((a, b) => a.name.localeCompare(b.name));
+  parents.sort((a, b) => a.name.localeCompare(b.name));
+  teachers.sort((a, b) => a.name.localeCompare(b.name));
+
+  const parentMap = {};
+  parents.forEach(p => {
+    if (p.childEmail) parentMap[p.childEmail] = p;
+  });
+
+  const orderedSP = [];
+  const usedParents = new Set();
+
+  // 1. Students with their parents
+  students.forEach(student => {
+    orderedSP.push(student);
+    const parent = parentMap[student.email];
+    if (parent) {
+      orderedSP.push(parent);
+      usedParents.add(parent.email);
+    }
+  });
+
+  // 2. Unpaired parents
+  parents.forEach(parent => {
+    if (!usedParents.has(parent.email)) {
+      orderedSP.push(parent);
+    }
+  });
+
+  // Render students+parents
+  orderedSP.forEach(userObj => {
+    const wrapper = document.createElement("div");
+    const div = document.createElement("div");
+    div.className = "client-item";
+
+    let extra = "";
+    if (userObj.role === "student" && userObj.teacherEmail) {
+      const t = allUsers.find(u => u.email === userObj.teacherEmail);
+      extra = `<br><small>Teacher: ${t ? t.name : userObj.teacherEmail}</small>`;
+    }
+    if (userObj.role === "parent" && userObj.childEmail) {
+      const c = allUsers.find(u => u.email === userObj.childEmail);
+      extra = `<br><small>Child: ${c ? c.name : userObj.childEmail}</small>`;
+    }
+
+    div.innerHTML = `
+      <div class="client-header">
+        <div>
+          <strong>${userObj.name}</strong><br>
+          <small>${userObj.email}</small><br>
+          <span class="role-badge">${userObj.role.toUpperCase()}</span>
+          ${extra}
+        </div>
+
+        <div class="client-actions">
+          <button class="small-btn" onclick="toggleEditCard('${userObj.email}')">Edit</button>
+          <button class="small-btn" onclick="generateMessage('${userObj.name}', '${userObj.email}')">Message</button>
+          <button class="small-btn" style="background:#ffdddd;" onclick="deleteClient('${userObj.email}')">Delete</button>
+        </div>
+      </div>
+    `;
+
+    const editCard = document.createElement("div");
+    editCard.className = "edit-card";
+    editCard.id = `edit-${userObj.email}`;
+
+    wrapper.appendChild(div);
+    wrapper.appendChild(editCard);
+    spContainer.appendChild(wrapper);
+  });
+
+  // Render teachers separately
+  teachers.forEach(userObj => {
+    const wrapper = document.createElement("div");
+    const div = document.createElement("div");
+    div.className = "client-item";
+
+    div.innerHTML = `
+      <div class="client-header">
+        <div>
+          <strong>${userObj.name}</strong><br>
+          <small>${userObj.email}</small><br>
+          <span class="role-badge">${userObj.role.toUpperCase()}</span>
+        </div>
+
+        <div class="client-actions">
+          <button class="small-btn" onclick="toggleEditCard('${userObj.email}')">Edit</button>
+          <button class="small-btn" onclick="generateMessage('${userObj.name}', '${userObj.email}')">Message</button>
+          <button class="small-btn" style="background:#ffdddd;" onclick="deleteClient('${userObj.email}')">Delete</button>
+        </div>
+      </div>
+    `;
+
+    const editCard = document.createElement("div");
+    editCard.className = "edit-card";
+    editCard.id = `edit-${userObj.email}`;
+
+    wrapper.appendChild(div);
+    wrapper.appendChild(editCard);
+    tContainer.appendChild(wrapper);
+  });
+}
+
+/* ===========================================================
+   INLINE EDIT CARD
+   =========================================================== */
+function toggleEditCard(email) {
+  const card = document.getElementById(`edit-${email}`);
+
+  if (openEditCard && openEditCard !== card) {
+    openEditCard.classList.remove("open");
+  }
+
+  if (card.classList.contains("open")) {
+    card.classList.remove("open");
+    openEditCard = null;
+    return;
+  }
+
+  openEditCard = card;
+  loadEditCard(email, card);
+}
+
+function loadEditCard(email, card) {
+  const userObj = allUsers.find(u => u.email === email);
+
+  const teachers = allUsers.filter(u => u.role === "teacher");
+  const students = allUsers.filter(u => u.role === "student");
+
+  card.innerHTML = `
+    <label>Name</label>
+    <input id="edit-name-${email}" value="${userObj.name}">
+
+    <label>Email</label>
+    <input id="edit-email-${email}" value="${userObj.email}">
+
+    <label>Role</label>
+    <select id="edit-role-${email}">
+      <option value="student" ${userObj.role === "student" ? "selected" : ""}>Student</option>
+      <option value="parent" ${userObj.role === "parent" ? "selected" : ""}>Parent</option>
+      <option value="teacher" ${userObj.role === "teacher" ? "selected" : ""}>Teacher</option>
+    </select>
+
+    <label>New Password (optional)</label>
+    <input id="edit-password-${email}" type="password">
+
+    <div class="edit-field" id="field-teacher-${email}">
+      <label>Teacher</label>
+      <select id="edit-teacher-${email}">
+        <option value="">None</option>
+        ${teachers.map(t => `
+          <option value="${t.email}" ${t.email === userObj.teacherEmail ? "selected" : ""}>
+            ${t.name} (${t.email})
+          </option>
+        `).join("")}
+      </select>
+    </div>
+
+    <div class="edit-field" id="field-parent-${email}">
+      <label>${userObj.role === "parent" ? "Child" : "Parent"}</label>
+      <select id="edit-parent-${email}">
+        <option value="">None</option>
+        ${students.map(s => `
+          <option value="${s.email}" ${s.email === userObj.childEmail ? "selected" : ""}>
+            ${s.name}
+          </option>
+        `).join("")}
+      </select>
+    </div>
+
+    <div class="edit-field" id="field-rate-${email}">
+      <label>Lesson Rate (£)</label>
+      <input id="edit-rate-${email}" type="number" min="1" value="${userObj.lessonRate || 30}">
+    </div>
+
+    <div class="edit-buttons">
+      <button class="save-btn" onclick="saveClientChanges('${email}')">Save Changes</button>
+      <button class="cancel-btn" onclick="toggleEditCard('${email}')">Cancel</button>
+    </div>
+  `;
+
+  const role = userObj.role;
+
+  const teacherField = document.getElementById(`field-teacher-${email}`);
+  const parentField = document.getElementById(`field-parent-${email}`);
+  const rateField = document.getElementById(`field-rate-${email}`);
+
+  if (role === "student") {
+    teacherField.style.display = "block";
+    rateField.style.display = "block";
+    parentField.style.display = "none";
+  }
+
+  if (role === "parent") {
+    parentField.style.display = "block";
+    teacherField.style.display = "none";
+    rateField.style.display = "none";
+  }
+
+  if (role === "teacher") {
+    teacherField.style.display = "none";
+    parentField.style.display = "none";
+    rateField.style.display = "none";
+  }
+
+  card.classList.add("open");
+}
+
+/* ===========================================================
+   SAVE CLIENT CHANGES
+   =========================================================== */
+async function saveClientChanges(email) {
+  const name = document.getElementById(`edit-name-${email}`).value;
+  const newEmail = document.getElementById(`edit-email-${email}`).value;
+  const role = document.getElementById(`edit-role-${email}`).value;
+  const password = document.getElementById(`edit-password-${email}`).value;
+  const teacherEmail = document.getElementById(`edit-teacher-${email}`).value;
+  const childEmail = document.getElementById(`edit-parent-${email}`).value;
+  const lessonRate = document.getElementById(`edit-rate-${email}`).value;
+
+  // Update role
+  await fetch("http://localhost:4000/api/update-role", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, role })
+  });
+
+  // Update password
+  if (password.trim() !== "") {
+    await fetch("http://localhost:4000/api/update-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, newPassword: password })
+    });
+  }
+
+  // Update teacher
+  await fetch("http://localhost:4000/api/update-teacher", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, teacherEmail })
+  });
+
+  // Update parent/child
+  await fetch("http://localhost:4000/api/update-child", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, childEmail })
+  });
+
+  // Update lesson rate
+  await fetch("http://localhost:4000/api/update-lesson-rate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, lessonRate })
+  });
+
+  openEditCard.classList.remove("open");
+  await loadClientList();
+}
+
+/* ===========================================================
+   MESSAGE PANEL
+   =========================================================== */
+function generateMessage(name, email) {
+  const tempPassword = prompt("Enter temporary password:");
+  if (!tempPassword) return;
+
+  const message = `
+Hi ${name}! Your MN Teaching account is ready.
+
+Email: ${email}
+Password: ${tempPassword}
+
+Login here:
+https://mnteaching.co.uk/client-portal.html
+
+Let me know if you need anything!
+  `.trim();
+
+  document.getElementById("message-content").textContent = message;
+  document.getElementById("message-panel").classList.add("open");
+}
+
+function closeMessagePanel() {
+  document.getElementById("message-panel").classList.remove("open");
+}
+
+function copyMessage() {
+  const text = document.getElementById("message-content").textContent;
+  navigator.clipboard.writeText(text);
+  alert("Copied!");
+}
+
+/* ===========================================================
+   DELETE CLIENT
+   =========================================================== */
+async function deleteClient(email) {
+  if (!confirm(`Delete ${email}?`)) return;
+
+  await fetch(`http://localhost:4000/api/users/${email}`, { method: "DELETE" });
+  await loadClientList();
+}
+
+/* ===========================================================
+   INIT
+   =========================================================== */
+async function initClientManager() {
+  await loadClientList();
+
+  // Default to "student" mode and show fields appropriately
+  document.getElementById("client-role").value = "student";
+  updateAddClientVisibility();
+}
+initClientManager();
+</script>
+
+</body>
+</html>
