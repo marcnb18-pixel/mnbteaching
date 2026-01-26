@@ -247,7 +247,7 @@ button:hover,
 }
 
 .hero-image {
-  width: fit;
+  width: 400px;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: var(--shadow-soft);
@@ -635,3 +635,4 @@ button:hover,
   color: white;
 
 }
+
