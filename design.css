@@ -247,8 +247,7 @@ button:hover,
 }
 
 .hero-image {
-  width: 400px;
-  height: 280px;
+  width: fit;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: var(--shadow-soft);
@@ -634,4 +633,5 @@ button:hover,
 #logout-btn-mobile {
   background-color: var(--accent);
   color: white;
+
 }
