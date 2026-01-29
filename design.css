@@ -470,6 +470,11 @@ button:hover,
   width: 120px;
 }
 
+footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
 /* ===========================================================
    DASHBOARD + PAYMENTS
    ----------------------------------------------------------- */
@@ -635,4 +640,5 @@ button:hover,
   color: white;
 
 }
+
 
