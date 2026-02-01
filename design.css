@@ -247,7 +247,7 @@ button:hover,
 }
 
 .hero-image {
-  width: 400px;
+  width: 350px;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: var(--shadow-soft);
@@ -640,5 +640,6 @@ footer a {
   color: white;
 
 }
+
 
 
