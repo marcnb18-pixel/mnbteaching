@@ -459,6 +459,11 @@ button:hover,
   line-height: 1.6;
 }
 
+.contact-section .cta-button {
+  font-size: 1.25rem;
+  padding: 1.1rem 2.4rem;
+}
+
 /* FOOTER */
 .site-footer {
   background-color: var(--blue);
@@ -647,6 +652,7 @@ footer a {
   color: white;
 
 }
+
 
 
 
