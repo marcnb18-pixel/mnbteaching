@@ -434,10 +434,14 @@ button:hover,
   text-align: center;
 }
 
-.contact-intro {
+.contact-section h2 {
+  font-size: 2rem;
+  color: var(--blue);
+}
+
+.contact-section p{
   font-size: 1.15rem;
   color: var(--blue);
-  margin-bottom: 40px;
   line-height: 1.6;
 }
 
@@ -633,3 +637,4 @@ footer a {
   background-color: var(--accent);
   color: white;
 }
+
