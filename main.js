@@ -82,36 +82,38 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ------------------------------
      ✅ FAQ ACCORDION
   ------------------------------ */
-  const faqItems = document.querySelectorAll('.faq-item');
+const faqItems = document.querySelectorAll('.faq-item');
 
-  faqItems.forEach(item => {
-    const question = item.querySelector('.faq-question');
-    const answer = item.querySelector('.faq-answer');
+faqItems.forEach(item => {
+  const question = item.querySelector('.faq-question');
+  const answer = item.querySelector('.faq-answer');
 
-    if (!question || !answer) return;
+  if (!question || !answer) return;
 
-    question.addEventListener('click', () => {
+  question.addEventListener('click', () => {
 
-      // Close all other items
-      faqItems.forEach(otherItem => {
-        if (otherItem !== item) {
-          otherItem.classList.remove('open');
-          const otherAnswer = otherItem.querySelector('.faq-answer');
-          if (otherAnswer) otherAnswer.style.maxHeight = null;
-        }
-      });
-
-      // Toggle current item
-      item.classList.toggle('open');
-
-      if (item.classList.contains('open')) {
-        answer.style.maxHeight = answer.scrollHeight + "px";
-      } else {
-        answer.style.maxHeight = null;
+    // Close all other items
+    faqItems.forEach(otherItem => {
+      if (otherItem !== item) {
+        otherItem.classList.remove('open');
+        const otherQuestion = otherItem.querySelector('.faq-question');
+        const otherAnswer = otherItem.querySelector('.faq-answer');
+        if (otherQuestion) otherQuestion.classList.remove('active');
+        if (otherAnswer) otherAnswer.style.maxHeight = null;
       }
     });
-  });
 
+    // Toggle current item
+    item.classList.toggle('open');
+    question.classList.toggle('active');  // ADD THIS for the +/− icon
+
+    if (item.classList.contains('open')) {
+      answer.style.maxHeight = answer.scrollHeight + "px";
+    } else {
+      answer.style.maxHeight = null;
+    }
+  });
+});
 
   /* ------------------------------
      ✅ CHANGE PASSWORD FORM
